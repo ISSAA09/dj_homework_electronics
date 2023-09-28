@@ -14,7 +14,7 @@ def index(request):
 def categories(request):
     context = {
         'object_list': Category.objects.all(),
-        'title': 'Электроника- наша жизнь!'
+        'title': 'Электроника - Территория низких цен!'
     }
     return render(request, 'catalog/categories.html', context)
 
