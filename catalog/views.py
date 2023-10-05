@@ -1,6 +1,8 @@
+from django.core.mail import send_mail
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+from pytils.translit import slugify
 
 from catalog.models import Category, Product, Blog
 
@@ -11,6 +13,30 @@ def index(request):
         'title': 'Электроника- Главная'
     }
     return render(request, 'catalog/index.html', context)
+
+
+class BlogDetailView(DetailView):
+    model = Blog
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        self.object.views_count += 1
+        self.object.save()
+        return self.object
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(pk=self.kwargs.get('pk'))
+        return queryset
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super().get_context_data(*args, **kwargs)
+
+        category_item = Blog.objects.get(pk=self.kwargs.get('pk'))
+        context_data['pk'] = category_item.pk,
+        context_data['title'] = f'{category_item.title}'
+
+        return context_data
 
 
 class CategoryListView(ListView):
@@ -40,21 +66,36 @@ class ProductListView(ListView):
 
 class BlogListView(ListView):
     model = Blog
+
+    def get_queryset(self, *args, **kwargs):
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = queryset.filter(sign_publication=True)
+        return queryset
+
     extra_context = {
-        'title': 'Введение блога!'
+        'title': 'Блог'
     }
 
 
 class BlogCreateView(CreateView):
     model = Blog
-    fields = {'title', 'description', 'creation_data', 'sign_publication'}
+    fields = {'title', 'description', 'creation_data', 'sign_publication','preview'}
     success_url = reverse_lazy('catalog:blogs')
+
+    def form_valid(self, form):
+        if form.is_valid():
+            new_mat = form.save()
+            new_mat.slug = slugify(new_mat.title)
+            new_mat.save()
+        return super().form_valid(form)
 
 
 class BlogUpdateView(UpdateView):
     model = Blog
-    fields = {'title', 'description', 'creation_data', 'sign_publication'}
-    success_url = reverse_lazy('catalog:blogs')
+    fields = {'title', 'description', 'creation_data', 'sign_publication','preview'}
+
+    def get_success_url(self):
+        return reverse_lazy('catalog:blog_detail', args=[self.object.pk])
 
 
 class BlogDeleteView(DeleteView):
@@ -84,3 +125,12 @@ class BlogDeleteView(DeleteView):
 #        message = request.POST.get('message')
 #        print(f"Имя: {name}, Номер телефона: {phone}, Сообщение: {message}")
 #    return render(request, 'catalog/contacts.html')
+
+
+# def blog_detail(request, pk):
+#    category_item = Blog.objects.get(pk=pk)
+#    context = {
+#        'object_list': Blog.objects.filter(pk=pk),
+#        'title': f'{category_item.title}'
+#    }
+#    return render(request, 'catalog/blog_detail.html', context)
