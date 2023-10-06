@@ -1,18 +1,22 @@
 from django.core.mail import send_mail
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView, TemplateView
 from pytils.translit import slugify
 
 from catalog.models import Category, Product, Blog
 
 
-def index(request):
-    context = {
-        'object_list': Category.objects.all()[:3],
+class IndexView(TemplateView):
+    template_name = 'catalog/index.html'
+    extra_context = {
         'title': 'Электроника- Главная'
     }
-    return render(request, 'catalog/index.html', context)
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data['object_list'] = Category.objects.all()[:3]
+        return context_data
 
 
 class BlogDetailView(DetailView):
@@ -79,7 +83,7 @@ class BlogListView(ListView):
 
 class BlogCreateView(CreateView):
     model = Blog
-    fields = {'title', 'description', 'creation_data', 'sign_publication','preview'}
+    fields = {'title', 'description', 'creation_data', 'sign_publication', 'preview'}
     success_url = reverse_lazy('catalog:blogs')
 
     def form_valid(self, form):
@@ -92,7 +96,7 @@ class BlogCreateView(CreateView):
 
 class BlogUpdateView(UpdateView):
     model = Blog
-    fields = {'title', 'description', 'creation_data', 'sign_publication','preview'}
+    fields = {'title', 'description', 'creation_data', 'sign_publication', 'preview'}
 
     def get_success_url(self):
         return reverse_lazy('catalog:blog_detail', args=[self.object.pk])
@@ -101,6 +105,13 @@ class BlogUpdateView(UpdateView):
 class BlogDeleteView(DeleteView):
     model = Blog
     success_url = reverse_lazy('catalog:blogs')
+
+# def index(request):
+#    context = {
+#        'object_list': Category.objects.all()[:3],
+#        'title': 'Электроника- Главная'
+#    }
+#    return render(request, 'catalog/index.html', context)
 
 # def categories(request):
 #    context = {
