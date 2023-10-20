@@ -50,7 +50,7 @@
     "fields": {
       "name": "Apple iPhone 15",
       "text": "128Gb, A3092, черный",
-      "photo": "",
+      "photo": "catalog/iphone-15-finish-select-202309-6-1inch-pink.jpeg",
       "category": 2,
       "price": 124990,
       "data": "2023-09-28",
@@ -72,24 +72,11 @@
   },
   {
     "model": "catalog.product",
-    "pk": 3,
-    "fields": {
-      "name": "Ноутбук Huawei MateBook D 15 BOD-WDI9",
-      "text": "15.6\", IPS, Intel Core i3 1115G4 3ГГц, 2-ядерный, 8ГБ DDR4, 256ГБ SSD, Intel UHD Graphics , Windows 11 Home",
-      "photo": "",
-      "category": 1,
-      "price": 47990,
-      "data": "2023-09-28",
-      "last_modified": "2023-09-28"
-    }
-  },
-  {
-    "model": "catalog.product",
     "pk": 4,
     "fields": {
       "name": "Ноутбук ASUS A516JP-EJ463",
       "text": "Intel Core i7 1065G7 1.3ГГц, 4-ядерный, 16ГБ DDR4, 512ГБ SSD, NVIDIA GeForce MX330 - 2 ГБ, без операционной системы, серебристый",
-      "photo": "",
+      "photo": "catalog/600012599396b1.png.webp",
       "category": 1,
       "price": 54990,
       "data": "2023-09-28",
@@ -172,6 +159,52 @@
       "price": 27990,
       "data": "2023-09-28",
       "last_modified": "2023-09-28"
+    }
+  },
+  {
+    "model": "catalog.blog",
+    "pk": 29,
+    "fields": {
+      "title": "Что показали на летней презентации Galaxy Unpacked 2023?",
+      "slug": "chto-pokazali-na-letnej-prezentatsii-galaxy-unpacked-2023",
+      "description": "Состоялась одна из главных “технологических” презентаций этого лета - Galaxy Unpacked, на которой Samsung показала сразу несколько знаковых новинок, включая долгожданные Samsung Galaxy Z Flip5 и Samsung Galaxy Z Fold5.",
+      "preview": "",
+      "creation_data": "2023-10-05",
+      "sign_publication": true,
+      "views_count": 36
+    }
+  },
+  {
+    "model": "catalog.blog",
+    "pk": 30,
+    "fields": {
+      "title": "Пик технологии QLED: телевизоры Samsung Neo QLED 4K QN90C и Samsung Neo QLED 4K QN85C",
+      "slug": "pik-tehnologii-qled-televizoryi-samsung-neo-qled-4k-qn90c-i-samsung-neo-qled-4k-qn85c",
+      "description": "Новые Samsung Neo QLED 4K QN90C и Samsung Neo QLED 4K QN85C относятся к редкой категории премиальных телевизоров, которые полностью оправдывают ожидания. Идеальное качество изображения, дизайн в духе минимализма, технологии Neo QLED и Quantum Mini LED, мощнейший процессор и безупречное масштабирование контента, - кажется, такими и должны быть одни из лучших QLED-телевизоров года.",
+      "preview": "",
+      "creation_data": "2023-10-04",
+      "sign_publication": true,
+      "views_count": 69
+    }
+  },
+  {
+    "model": "catalog.version",
+    "pk": 6,
+    "fields": {
+      "product": 4,
+      "number": 0,
+      "name": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.version",
+    "pk": 7,
+    "fields": {
+      "product": 1,
+      "number": 15,
+      "name": null,
+      "is_active": true
     }
   }
 ]

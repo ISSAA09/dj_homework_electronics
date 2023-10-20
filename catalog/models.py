@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 NULLABALE = {'blank': True, 'null': True}
 
@@ -24,6 +25,8 @@ class Product(models.Model):
     price = models.IntegerField(verbose_name='цена')
     data = models.DateField(verbose_name='дата')
     last_modified = models.DateField(verbose_name='дата последнего изменения')
+
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, verbose_name='владелец', **NULLABALE)
 
     def __str__(self):
         return f'{self.name} ({self.category})'
