@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.mail import send_mail
 from django.forms import inlineformset_factory
 from django.shortcuts import render
@@ -5,7 +6,7 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView, TemplateView
 from pytils.translit import slugify
 
-from catalog.forms import ProductForm, VersionForm
+from catalog.forms import ProductForm, VersionForm, ProductFormManagers
 from catalog.models import Category, Product, Blog, Version
 
 
@@ -57,7 +58,7 @@ class ProductListView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        queryset = queryset.filter(category_id=self.kwargs.get('pk'))
+        queryset = queryset.filter(category_id=self.kwargs.get('pk'), status_of_product=True)
         return queryset
 
     def get_context_data(self, *args, **kwargs):
@@ -83,7 +84,7 @@ class BlogListView(ListView):
     }
 
 
-class BlogCreateView(CreateView):
+class BlogCreateView(LoginRequiredMixin, CreateView):
     model = Blog
     fields = {'title', 'description', 'creation_data', 'sign_publication', 'preview'}
     success_url = reverse_lazy('catalog:blogs')
@@ -96,7 +97,7 @@ class BlogCreateView(CreateView):
         return super().form_valid(form)
 
 
-class BlogUpdateView(UpdateView):
+class BlogUpdateView(LoginRequiredMixin, UpdateView):
     model = Blog
     fields = {'title', 'description', 'creation_data', 'sign_publication', 'preview'}
 
@@ -104,14 +105,15 @@ class BlogUpdateView(UpdateView):
         return reverse_lazy('catalog:blog_detail', args=[self.object.pk])
 
 
-class BlogDeleteView(DeleteView):
+class BlogDeleteView(LoginRequiredMixin, DeleteView):
     model = Blog
     success_url = reverse_lazy('catalog:blogs')
 
 
-class ProductCreateView(CreateView):
+class ProductCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
+    permission_required = 'catalog.add_product'
     success_url = reverse_lazy('catalog:categories')
 
     def form_valid(self, form):
@@ -122,9 +124,17 @@ class ProductCreateView(CreateView):
         return super().form_valid(form)
 
 
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Product
+    permission_required = 'catalog.change_product'
     form_class = ProductForm
+
+    def get_form_class(self):
+        if (self.request.user.is_staff and not self.request.user.is_superuser
+                and self.object.owner != self.request.user):
+            return ProductFormManagers
+        else:
+            return ProductForm
 
     def get_success_url(self):
         return reverse('catalog:categories')
@@ -164,7 +174,7 @@ class ProductDetailView(DetailView):
     }
 
 
-class ProductDeleteView(DeleteView):
+class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     success_url = reverse_lazy('catalog:categories')
 

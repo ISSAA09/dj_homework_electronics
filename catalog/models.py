@@ -26,6 +26,8 @@ class Product(models.Model):
     data = models.DateField(verbose_name='дата')
     last_modified = models.DateField(verbose_name='дата последнего изменения')
 
+    status_of_product = models.BooleanField(default=False, verbose_name='опубликовано')
+
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, verbose_name='владелец', **NULLABALE)
 
     def __str__(self):
@@ -34,6 +36,22 @@ class Product(models.Model):
     class Meta:
         verbose_name = 'продукт'
         verbose_name_plural = 'продукты'
+
+        permissions = [
+            (
+                'set_status_of_product',
+                'Can set status_of_product'
+            ),
+            (
+                'set_text',
+                'Can text'
+            ),
+            (
+                'set_category',
+                'Can set category'
+            )
+
+        ]
 
 
 class Blog(models.Model):

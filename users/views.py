@@ -1,6 +1,8 @@
 import random
 
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
 from django.shortcuts import redirect, render
@@ -38,6 +40,7 @@ class UserRegisterView(CreateView):
         return super().form_valid(form)
 
 
+@login_required
 def pass_verification(request, pk):
     user = User.objects.get(pk=pk)
     code = user.code
@@ -60,6 +63,7 @@ def pass_verification(request, pk):
     return render(request, 'users/verification_form.html', {'form': form, 'pk': pk})
 
 
+@login_required
 def restore_password(request):
     if request.method == 'POST':
         form = RestorePasswordForm(request.POST)
@@ -91,7 +95,7 @@ def restore_password(request):
     return render(request, 'users/restore_password_form.html', {'form': form})
 
 
-class UserProfileView(UpdateView):
+class UserProfileView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserProfileForm
     success_url = reverse_lazy('users:profile')

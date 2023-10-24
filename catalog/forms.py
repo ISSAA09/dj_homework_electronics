@@ -37,3 +37,9 @@ class VersionForm(forms.ModelForm):
     class Meta:
         model = Version
         fields = "__all__"
+
+
+class ProductFormManagers(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ('text', 'category', 'status_of_product')
