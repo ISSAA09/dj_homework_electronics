@@ -1,13 +1,14 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.core.mail import send_mail
+from django.core.cache import cache
 from django.forms import inlineformset_factory
-from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView, TemplateView
 from pytils.translit import slugify
+from django.conf import settings
 
 from catalog.forms import ProductForm, VersionForm, ProductFormManagers
 from catalog.models import Category, Product, Blog, Version
+from catalog.services import get_cache_categories
 
 
 class IndexView(TemplateView):
@@ -51,6 +52,9 @@ class CategoryListView(ListView):
     extra_context = {
         'title': 'Электроника - Территория низких цен!'
     }
+
+    def get_queryset(self):
+        return get_cache_categories()
 
 
 class ProductListView(ListView):
